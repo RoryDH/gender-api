@@ -1,7 +1,7 @@
 require 'json'
 require 'sinatra'
 require 'gender_detector'
-gd = GenderDetector.new(case_sensitive: false)
+$gd = GenderDetector.new(case_sensitive: false)
 GENDER_FORMAT = {
   male:          'm',
   mostly_male:   'm',
@@ -26,14 +26,12 @@ end
 
 post '/bulk' do
   names = req_json['names']
-  return error('Invalid Request') unless names
+  return error('Invalid Request') unless names && names.is_a?(Array)
   
   gender_map = {}
-  names.each do |name|
-    gender_map[name] = GENDER_FORMAT[gd.get_gender(name, :ireland)]
+  names.uniq.each do |name|
+    gender_map[name] = GENDER_FORMAT[$gd.get_gender(name, :ireland)]
   end
 
-  {
-    names: gender_map
-  }.to_json
+  { names: gender_map }.to_json
 end
