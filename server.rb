@@ -1,6 +1,9 @@
 require 'json'
 require 'sinatra'
 require 'gender_detector'
+
+enable :logging
+
 $gd = GenderDetector.new(case_sensitive: false)
 GENDER_FORMAT = {
   male:          'm',
@@ -33,5 +36,6 @@ post '/bulk' do
     gender_map[name] = GENDER_FORMAT[$gd.get_gender(name, :ireland)]
   end
 
+  logger.info("#{gender_map.size} names (like #{names[0]})")
   { names: gender_map }.to_json
 end
