@@ -1,8 +1,12 @@
 require 'json'
 require 'sinatra'
+require 'sinatra/cross_origin'
 require 'gender_detector'
 
 enable :logging
+configure do
+  enable :cross_origin
+end
 
 $gd = GenderDetector.new(case_sensitive: false)
 GENDER_FORMAT = {
